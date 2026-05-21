@@ -622,6 +622,10 @@ const reminderStateMeta = {
 function App() {
   const [view, setView] = useState<AppView>('publish')
   const [sharedOpen, setSharedOpen] = useState(false)
+  const [presentationOpen, setPresentationOpen] = useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('present') === '1'
+  ))
+  const [presentationStep, setPresentationStep] = useState(0)
   const [activeTab, setActiveTab] = useState<ReminderTab>('email')
   const [rowMenu, setRowMenu] = useState<string | null>(null)
   const [repeat, setRepeat] = useState<RepeatFrequency>('daily')
@@ -653,6 +657,18 @@ function App() {
       window.scrollTo({ top: 0, left: 0 })
     }
   }, [view])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setPresentationOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const activeRecipients = useMemo(
     () => recipientUsers.filter((user) => user.status !== 'submitted'),
@@ -901,6 +917,25 @@ function App() {
           onInvite={handleBulkInvite}
         />
       )}
+
+      {presentationOpen && (
+        <PresentationNotes
+          activeStep={presentationStep}
+          setActiveStep={setPresentationStep}
+          onClose={() => setPresentationOpen(false)}
+        />
+      )}
+
+      {!presentationOpen && (
+        <button
+          className="presentation-launcher"
+          type="button"
+          onClick={() => setPresentationOpen(true)}
+        >
+          <Icon name="info-circle-filled" category="general" size={16} />
+          Demo Notes
+        </button>
+      )}
     </div>
   )
 }
@@ -947,6 +982,118 @@ function TopBar() {
         <div className="user-avatar">HS</div>
       </div>
     </header>
+  )
+}
+
+const presentationSlides = [
+  {
+    eyebrow: 'Title',
+    title: 'Submission-aware reminders for Invite by Email',
+    body: 'Hackweek prototype for turning form invitations into a follow-up workflow that knows each recipient status.',
+    bullets: [
+      'Invite people with personal form links.',
+      'Schedule reminders for all, selected, or individual invitees.',
+      'Stop reminders automatically after submission.',
+    ],
+  },
+  {
+    eyebrow: 'Issue from tickets',
+    title: 'Inviting people is easy. Following up is manual.',
+    body: 'Users can invite people to fill a form, but they do not have a good follow-up screen or submission-aware reminder setup.',
+    bullets: [
+      'Admins need to know who has not submitted yet.',
+      'Reminder emails should not keep going after a recipient completes the form.',
+      'Large invite lists need tracking, filtering, and bulk actions.',
+    ],
+  },
+]
+
+function PresentationNotes({
+  activeStep,
+  setActiveStep,
+  onClose,
+}: {
+  activeStep: number
+  setActiveStep: (step: number) => void
+  onClose: () => void
+}) {
+  const slide = presentationSlides[activeStep]
+  const isLast = activeStep === presentationSlides.length - 1
+
+  return (
+    <aside className="presentation-notes" role="dialog" aria-label="Demo presentation notes" aria-modal="false">
+      <header className="presentation-notes__header">
+        <div>
+          <span>Demo flow</span>
+          <strong>{activeStep + 1} / {presentationSlides.length}</strong>
+        </div>
+        <Button
+          iconOnly
+          variant="filled"
+          colorScheme="secondary"
+          shape="rounded"
+          size="sm"
+          aria-label="Close demo notes"
+          title="Close"
+          leftIcon={<Icon name="xmark" category="general" size={14} />}
+          onClick={onClose}
+        />
+      </header>
+
+      <div className="presentation-notes__body">
+        <span className="presentation-notes__eyebrow">{slide.eyebrow}</span>
+        <h2>{slide.title}</h2>
+        <p>{slide.body}</p>
+        <ul>
+          {slide.bullets.map((bullet) => (
+            <li key={bullet}>{bullet}</li>
+          ))}
+        </ul>
+      </div>
+
+      <footer className="presentation-notes__footer">
+        <div className="presentation-notes__dots" aria-label="Presentation slide selector">
+          {presentationSlides.map((item, index) => (
+            <button
+              key={item.eyebrow}
+              type="button"
+              className={index === activeStep ? 'presentation-notes__dot presentation-notes__dot--active' : 'presentation-notes__dot'}
+              aria-label={`Show ${item.eyebrow}`}
+              onClick={() => setActiveStep(index)}
+            />
+          ))}
+        </div>
+
+        <div className="presentation-notes__actions">
+          <Button
+            variant="filled"
+            colorScheme="secondary"
+            size="sm"
+            disabled={activeStep === 0}
+            leftIcon={<Icon name="arrow-left" category="arrows" size={14} />}
+            onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
+          >
+            Back
+          </Button>
+          <Button
+            variant="filled"
+            colorScheme="primary"
+            size="sm"
+            rightIcon={<Icon name={isLast ? 'xmark' : 'arrow-right'} category={isLast ? 'general' : 'arrows'} size={14} />}
+            onClick={() => {
+              if (isLast) {
+                onClose()
+                return
+              }
+
+              setActiveStep(activeStep + 1)
+            }}
+          >
+            {isLast ? 'Start Demo' : 'Next'}
+          </Button>
+        </div>
+      </footer>
+    </aside>
   )
 }
 
