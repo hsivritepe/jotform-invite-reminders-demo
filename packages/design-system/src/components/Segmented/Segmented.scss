@@ -1,0 +1,106 @@
+.jf-segmented {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.jf-segmented--full {
+  display: flex;
+  width: 100%;
+}
+
+.jf-segmented__btn {
+  flex: 1 0 0;
+  height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background: var(--background-white);
+  border: 1px solid var(--border-light);
+  margin-right: -1px;
+  cursor: pointer;
+  color: var(--text-medium);
+  font-family: var(--font-family-circular);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  letter-spacing: var(--letter-spacing-md);
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+
+  &:first-child {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+  }
+
+  &:last-child {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    margin-right: 0;
+  }
+
+  &:not(&--active):not(&--disabled):not(:disabled):hover {
+    background: var(--background-lightest);
+    color: var(--text-dark);
+  }
+
+  &--active {
+    color: var(--text-white);
+    background: var(--accent-default);
+
+    &:hover {
+      background: var(--accent-default);
+    }
+  }
+
+  &--disabled,
+  &:disabled {
+    color: var(--text-light);
+    cursor: not-allowed;
+  }
+
+  .jf-segmented--sm & {
+    height: 32px;
+    padding: var(--spacing-2xs) var(--spacing-xs);
+    font-size: var(--font-size-xs);
+  }
+
+  .jf-segmented--icon & {
+    padding: 0;
+  }
+}
+
+.jf-segmented__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.jf-segmented__label {
+  white-space: nowrap;
+}
+
+[data-theme='dark'] {
+  .jf-segmented__btn {
+    background: var(--gray-500);
+    border-color: var(--gray-700);
+    color: var(--text-white);
+
+    &:not(&--active):not(&--disabled):not(:disabled):hover {
+      background: var(--gray-400);
+      color: var(--text-white);
+    }
+
+    &--active {
+      color: var(--text-white);
+      background: var(--accent-default);
+    }
+
+    &--disabled,
+    &:disabled {
+      color: var(--secondary-background-lightest);
+    }
+  }
+}

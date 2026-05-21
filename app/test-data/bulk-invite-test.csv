@@ -1,0 +1,8 @@
+email,name,role
+camila.reyes@example.com,Camila Reyes,Submit & View
+noah.patel@example.com,Noah Patel,submit and edit
+mia.chen@example.com,Mia Chen,submit only
+taylor.blankrole@example.com,Taylor Blank Role,
+alex.viewer@company.com,Existing Alex Viewer,Submit & View
+camila.reyes@example.com,Camila Duplicate,Submit Only
+not-an-email,Broken Email,Submit & Edit

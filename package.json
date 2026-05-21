@@ -1,0 +1,10 @@
+{
+  "name": "jf-ds-starter",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @jf/starter-app dev",
+    "dev:ds": "pnpm --filter @jf/design-system dev",
+    "build": "pnpm -r build",
+    "build:app": "pnpm --filter @jf/starter-app build"
+  }
+}

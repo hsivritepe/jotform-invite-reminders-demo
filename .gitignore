@@ -1,0 +1,19 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.log
+.DS_Store
+
+# Local demo artifacts
+app/screenshots
+app/test-data/*-preview.png
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.sw?
+
+# Temp
+tmp

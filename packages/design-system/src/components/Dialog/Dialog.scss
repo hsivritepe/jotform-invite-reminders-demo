@@ -1,0 +1,246 @@
+// ============================================
+// Dialog Box
+// Source: Figma / Dialog Box (Web 480 / Mobile 430)
+// ============================================
+
+.jf-dialog__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: color-mix(in srgb, var(--gray-900) 60%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  animation: jf-dialog-fade-in 0.15s ease;
+}
+
+.jf-dialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - var(--spacing-xl) * 2);
+  background: var(--background-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  font-family: var(--font-family-circular);
+  overflow: hidden;
+  animation: jf-dialog-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jf-dialog__close {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 1;
+  display: none;
+
+  .jf-btn--md {
+    height: 32px;
+    min-width: 32px;
+    width: 32px;
+  }
+}
+
+.jf-dialog__layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+// ===== Thumbnail icon =====
+.jf-dialog__thumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.jf-dialog__thumbnail-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .jf-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+// ===== Style tints (thumbnail bg + icon color) =====
+.jf-dialog--informative .jf-dialog__thumbnail-icon {
+  background: color-mix(in srgb, var(--blue-200) 50%, transparent);
+  color: var(--accent-default);
+}
+
+.jf-dialog--constructive .jf-dialog__thumbnail-icon {
+  background: color-mix(in srgb, var(--success-light) 50%, transparent);
+  color: var(--success-default);
+}
+
+.jf-dialog--warning .jf-dialog__thumbnail-icon {
+  background: color-mix(in srgb, var(--yellow-500) 30%, transparent);
+  color: var(--yellow-600);
+}
+
+.jf-dialog--destructive .jf-dialog__thumbnail-icon {
+  background: color-mix(in srgb, var(--error-light) 50%, transparent);
+  color: var(--error-default);
+}
+
+// ===== Content =====
+.jf-dialog__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  text-align: center;
+}
+
+.jf-dialog__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: var(--font-weight-medium);
+  line-height: 24px;
+  letter-spacing: -0.014em;
+  color: var(--text-darkest);
+  width: 100%;
+}
+
+.jf-dialog__description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-book);
+  line-height: var(--line-height-sm);
+  letter-spacing: -0.006em;
+  color: var(--text-medium);
+  width: 100%;
+}
+
+.jf-dialog__extras {
+  background: var(--background-lightest);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs);
+  max-width: 416px;
+  width: 100%;
+}
+
+// ===== Body (swap slot) =====
+.jf-dialog__body {
+  width: 100%;
+  max-width: 416px;
+}
+
+// ===== Actions =====
+.jf-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  flex-wrap: wrap;
+
+  > * {
+    flex: 0 0 auto;
+  }
+}
+
+// ===== Footer link bar =====
+.jf-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3xs);
+  background: var(--background-lightest);
+  padding: var(--spacing-sm) var(--spacing-xl);
+  flex-shrink: 0;
+}
+
+.jf-dialog__footer-suffix {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-xs);
+  color: var(--text-medium);
+  letter-spacing: -0.006em;
+}
+
+// ===== Mobile =====
+@media (max-width: 640px) {
+  .jf-dialog__overlay {
+    padding: var(--spacing-sm);
+  }
+
+  .jf-dialog {
+    max-width: 430px;
+  }
+
+  .jf-dialog__close {
+    display: block;
+  }
+
+  .jf-dialog__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    > * {
+      width: 100%;
+    }
+  }
+
+  .jf-dialog__footer {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+// ===== Animations =====
+@keyframes jf-dialog-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes jf-dialog-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+// ============================================
+// Dark mode
+// ============================================
+[data-theme='dark'] {
+  .jf-dialog {
+    background: var(--gray-500);
+  }
+
+  .jf-dialog__title {
+    color: var(--secondary-text-white);
+  }
+
+  .jf-dialog__description {
+    color: var(--secondary-text-light);
+  }
+
+  .jf-dialog__extras {
+    background: var(--gray-600);
+  }
+
+  .jf-dialog__footer {
+    background: var(--gray-600);
+  }
+
+  .jf-dialog__footer-suffix {
+    color: var(--secondary-text-light);
+  }
+}

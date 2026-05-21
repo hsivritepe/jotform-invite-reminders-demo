@@ -1,0 +1,121 @@
+.jf-field-mapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+  padding-left: var(--spacing-sm);
+  padding-right: 6px;
+  background: var(--gray-500);
+  border: 1px solid var(--gray-700);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--gray-300);
+  }
+}
+
+.jf-field-mapper__chip-slot {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+}
+
+.jf-field-mapper__trailing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.jf-field-mapper__divider {
+  display: inline-block;
+  width: 1px;
+  height: 23px;
+  background: var(--gray-700);
+}
+
+.jf-field-mapper__add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--secondary-text-light);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background: var(--gray-700);
+    color: var(--core-white);
+  }
+}
+
+.jf-field-mapper__menu {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-2xs);
+  background: var(--gray-500);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+}
+
+.jf-field-mapper__menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--spacing-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-circular);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-book);
+  line-height: 16px;
+  letter-spacing: -0.084px;
+  color: var(--core-white);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: var(--gray-400);
+  }
+}
+
+.jf-field-mapper__menu-leading {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.jf-field-mapper__menu-label {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jf-field-mapper__menu-trailing {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.jf-field-mapper__menu-divider {
+  height: 1px;
+  margin: var(--spacing-2xs) 0;
+  background: var(--gray-400);
+}
