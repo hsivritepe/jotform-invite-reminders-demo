@@ -1053,9 +1053,8 @@ function LegacyExperience({
     {
       id: 'pending-test',
       email: 'hakansivritepe+test@jotform.com',
-      status: 'Pending',
-      resend: true,
-      submitted: false,
+      status: 'Joined on May 20, 2026',
+      submitted: true,
     },
     {
       id: 'submitted-admin',
