@@ -6,14 +6,16 @@ The demo explores a flow where reminder schedules can target all invitees, selec
 
 ## Demo Deployment
 
-This repo is ready for GitHub Pages.
+This repo is ready for GitHub Pages using the `gh-pages` branch.
 
-1. Publish this folder as a public GitHub repo.
-2. In GitHub, open **Settings → Pages**.
-3. Set **Build and deployment → Source** to **GitHub Actions**.
-4. Push to `main`.
+The source code lives on `main`. The static production build is published to
+`gh-pages`.
 
-The workflow in `.github/workflows/deploy-github-pages.yml` builds `app/` and deploys `app/dist`.
+For this demo repository, the public URL is expected to be:
+
+```
+https://hsivritepe.github.io/jotform-invite-reminders-demo/
+```
 
 ## Original Starter Notes
 
