@@ -149,6 +149,9 @@ const emailTabs = [
   { value: 'stop', label: 'STOP RULES' },
 ]
 
+const productionDemoUrl = 'https://hsivritepe.github.io/jotform-invite-reminders-demo/?present=1'
+const productionDemoQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&margin=1&data=${encodeURIComponent(productionDemoUrl)}`
+
 const navItems: Array<{
   title: string
   subtitle: string
@@ -630,6 +633,9 @@ function App() {
   const [presentationOpen, setPresentationOpen] = useState(() => (
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('present') === '1'
   ))
+  const [presentationMode] = useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('present') === '1'
+  ))
   const [presentationStep, setPresentationStep] = useState(0)
   const [activeTab, setActiveTab] = useState<ReminderTab>('email')
   const [rowMenu, setRowMenu] = useState<string | null>(null)
@@ -960,7 +966,23 @@ function App() {
           Demo Notes
         </button>
       )}
+
+      {presentationMode && <ProductionDemoBadge />}
     </div>
+  )
+}
+
+function ProductionDemoBadge() {
+  return (
+    <aside className="production-demo-badge" aria-label="Production demo link">
+      <img src={productionDemoQrUrl} alt="QR code for production demo" />
+      <div>
+        <strong>REMINDER EMAIL FOR INVITED FORM FILLERS</strong>
+        <a href={productionDemoUrl} target="_blank" rel="noreferrer">
+          hsivritepe.github.io/jotform-invite-reminders-demo/?present=1
+        </a>
+      </div>
+    </aside>
   )
 }
 

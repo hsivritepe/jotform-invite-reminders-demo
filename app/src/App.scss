@@ -1578,6 +1578,54 @@ button {
   background: var(--accent-default);
 }
 
+.production-demo-badge {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 30;
+  width: min(430px, calc(100vw - 36px));
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  color: var(--text-white);
+  background: color-mix(in srgb, #000 76%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-white) 16%, transparent);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 36px color-mix(in srgb, #000 24%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.production-demo-badge img {
+  width: 72px;
+  height: 72px;
+  display: block;
+  border-radius: var(--radius-sm);
+  background: var(--background-white);
+}
+
+.production-demo-badge strong,
+.production-demo-badge a {
+  display: block;
+}
+
+.production-demo-badge strong {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0;
+}
+
+.production-demo-badge a {
+  overflow-wrap: anywhere;
+  margin-top: var(--spacing-3xs);
+  color: color-mix(in srgb, var(--text-white) 82%, transparent);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-sm);
+  text-decoration: none;
+}
+
 .shared-user-row {
   position: relative;
   min-height: 74px;
