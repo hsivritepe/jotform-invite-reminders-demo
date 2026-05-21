@@ -22,6 +22,7 @@ type ReminderFilter = 'all' | ReminderState
 type RepeatFrequency = 'daily' | 'weekly' | 'monthly'
 type ReminderScope = 'all' | 'selected' | 'individual'
 type ReminderAudience = 'not-submitted' | 'pending' | 'opened'
+type LegacyPage = 'publish' | 'email' | 'reminder'
 
 interface SelectOption {
   value: string
@@ -622,6 +623,10 @@ const reminderStateMeta = {
 function App() {
   const [view, setView] = useState<AppView>('publish')
   const [sharedOpen, setSharedOpen] = useState(false)
+  const [legacyMode, setLegacyMode] = useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('present') === '1'
+  ))
+  const [legacyPage, setLegacyPage] = useState<LegacyPage>('publish')
   const [presentationOpen, setPresentationOpen] = useState(() => (
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('present') === '1'
   ))
@@ -819,103 +824,117 @@ function App() {
 
   return (
     <div className="jf-app" data-figma-capture="page">
-      <TopBar />
-      <ProductTabs onOpenPublish={returnToPublishStart} />
-      <div className="jf-app__body">
-        <Sidebar onOpenAssignForm={returnToPublishStart} />
-        {view === 'publish' ? (
-          <PublishScreen
-            savedRule={savedRule}
-            reminderSummary={reminderSummary}
-            sharedCount={recipientUsers.length}
-            onOpenShared={() => setSharedOpen(true)}
-            onOpenBulkInvite={() => setBulkInviteOpen(true)}
-            onOpenReminder={() => openReminderSettings('schedule', 'all')}
-            onOpenStatus={openRecipientStatus}
-          />
-        ) : view === 'reminders' ? (
-          <ReminderSettings
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            repeat={repeat}
-            setRepeat={setRepeat}
-            sendDate={sendDate}
-            setSendDate={setSendDate}
-            monthDay={monthDay}
-            setMonthDay={setMonthDay}
-            sendTime={sendTime}
-            setSendTime={setSendTime}
-            timeZone={timeZone}
-            setTimeZone={setTimeZone}
-            audience={audience}
-            setAudience={setAudience}
-            reminderScope={reminderScope}
-            setReminderScope={setReminderScope}
-            individualRecipientId={individualRecipientId}
-            setIndividualRecipientId={setIndividualRecipientId}
-            users={recipientUsers}
-            selectedUsers={selectedRecipientUsers}
-            activeRecipients={activeRecipients.length}
-            backupEndEnabled={backupEndEnabled}
-            setBackupEndEnabled={setBackupEndEnabled}
-            backupEndDate={backupEndDate}
-            setBackupEndDate={setBackupEndDate}
-            maxRemindersEnabled={maxRemindersEnabled}
-            setMaxRemindersEnabled={setMaxRemindersEnabled}
-            maxReminderCount={maxReminderCount}
-            setMaxReminderCount={setMaxReminderCount}
-            stopOnBounce={stopOnBounce}
-            setStopOnBounce={setStopOnBounce}
-            manualControlsEnabled={manualControlsEnabled}
-            setManualControlsEnabled={setManualControlsEnabled}
-            onBack={() => {
-              setView('publish')
-              setSharedOpen(true)
-            }}
-            onSave={handleSaveReminder}
-          />
-        ) : (
-          <RecipientStatusPage
-            users={recipientUsers}
-            search={statusSearch}
-            setSearch={setStatusSearch}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            reminderFilter={reminderFilter}
-            setReminderFilter={setReminderFilter}
-            page={statusPage}
-            setPage={setStatusPage}
-            selectedRecipients={selectedRecipients}
-            setSelectedRecipients={setSelectedRecipients}
-            onBack={() => {
-              setView('publish')
-              setSharedOpen(true)
-            }}
-            onOpenReminder={openReminderSettings}
-          />
-        )}
-      </div>
-
-      {sharedOpen && view === 'publish' && (
-        <SharedUsersModal
-          users={recipientUsers}
-          rowMenu={rowMenu}
-          setRowMenu={setRowMenu}
-          onClose={() => {
-            setSharedOpen(false)
-            setRowMenu(null)
+      {legacyMode ? (
+        <LegacyExperience
+          page={legacyPage}
+          setPage={setLegacyPage}
+          onOpenPrototype={() => {
+            setLegacyMode(false)
+            setPresentationStep(2)
+            setPresentationOpen(true)
           }}
-          onOpenReminder={openReminderSettings}
-          onOpenStatus={openRecipientStatus}
         />
-      )}
+      ) : (
+        <>
+          <TopBar />
+          <ProductTabs onOpenPublish={returnToPublishStart} />
+          <div className="jf-app__body">
+            <Sidebar onOpenAssignForm={returnToPublishStart} />
+            {view === 'publish' ? (
+              <PublishScreen
+                savedRule={savedRule}
+                reminderSummary={reminderSummary}
+                sharedCount={recipientUsers.length}
+                onOpenShared={() => setSharedOpen(true)}
+                onOpenBulkInvite={() => setBulkInviteOpen(true)}
+                onOpenReminder={() => openReminderSettings('schedule', 'all')}
+                onOpenStatus={openRecipientStatus}
+              />
+            ) : view === 'reminders' ? (
+              <ReminderSettings
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                repeat={repeat}
+                setRepeat={setRepeat}
+                sendDate={sendDate}
+                setSendDate={setSendDate}
+                monthDay={monthDay}
+                setMonthDay={setMonthDay}
+                sendTime={sendTime}
+                setSendTime={setSendTime}
+                timeZone={timeZone}
+                setTimeZone={setTimeZone}
+                audience={audience}
+                setAudience={setAudience}
+                reminderScope={reminderScope}
+                setReminderScope={setReminderScope}
+                individualRecipientId={individualRecipientId}
+                setIndividualRecipientId={setIndividualRecipientId}
+                users={recipientUsers}
+                selectedUsers={selectedRecipientUsers}
+                activeRecipients={activeRecipients.length}
+                backupEndEnabled={backupEndEnabled}
+                setBackupEndEnabled={setBackupEndEnabled}
+                backupEndDate={backupEndDate}
+                setBackupEndDate={setBackupEndDate}
+                maxRemindersEnabled={maxRemindersEnabled}
+                setMaxRemindersEnabled={setMaxRemindersEnabled}
+                maxReminderCount={maxReminderCount}
+                setMaxReminderCount={setMaxReminderCount}
+                stopOnBounce={stopOnBounce}
+                setStopOnBounce={setStopOnBounce}
+                manualControlsEnabled={manualControlsEnabled}
+                setManualControlsEnabled={setManualControlsEnabled}
+                onBack={() => {
+                  setView('publish')
+                  setSharedOpen(true)
+                }}
+                onSave={handleSaveReminder}
+              />
+            ) : (
+              <RecipientStatusPage
+                users={recipientUsers}
+                search={statusSearch}
+                setSearch={setStatusSearch}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                reminderFilter={reminderFilter}
+                setReminderFilter={setReminderFilter}
+                page={statusPage}
+                setPage={setStatusPage}
+                selectedRecipients={selectedRecipients}
+                setSelectedRecipients={setSelectedRecipients}
+                onBack={() => {
+                  setView('publish')
+                  setSharedOpen(true)
+                }}
+                onOpenReminder={openReminderSettings}
+              />
+            )}
+          </div>
 
-      {bulkInviteOpen && view === 'publish' && (
-        <BulkInviteModal
-          existingUsers={recipientUsers}
-          onClose={() => setBulkInviteOpen(false)}
-          onInvite={handleBulkInvite}
-        />
+          {sharedOpen && view === 'publish' && (
+            <SharedUsersModal
+              users={recipientUsers}
+              rowMenu={rowMenu}
+              setRowMenu={setRowMenu}
+              onClose={() => {
+                setSharedOpen(false)
+                setRowMenu(null)
+              }}
+              onOpenReminder={openReminderSettings}
+              onOpenStatus={openRecipientStatus}
+            />
+          )}
+
+          {bulkInviteOpen && view === 'publish' && (
+            <BulkInviteModal
+              existingUsers={recipientUsers}
+              onClose={() => setBulkInviteOpen(false)}
+              onInvite={handleBulkInvite}
+            />
+          )}
+        </>
       )}
 
       {presentationOpen && (
@@ -923,6 +942,11 @@ function App() {
           activeStep={presentationStep}
           setActiveStep={setPresentationStep}
           onClose={() => setPresentationOpen(false)}
+          onOpenEmailPage={() => {
+            setLegacyMode(true)
+            setLegacyPage('email')
+          }}
+          onStartPrototype={() => setLegacyMode(false)}
         />
       )}
 
@@ -985,26 +1009,526 @@ function TopBar() {
   )
 }
 
+function LegacyExperience({
+  page,
+  setPage,
+  onOpenPrototype,
+}: {
+  page: LegacyPage
+  setPage: (page: LegacyPage) => void
+  onOpenPrototype: () => void
+}) {
+  const [sharedOpen, setSharedOpen] = useState(false)
+  const [actionsOpen, setActionsOpen] = useState<string | null>(null)
+  const [inviteExpanded, setInviteExpanded] = useState(false)
+  const [uploadMenuOpen, setUploadMenuOpen] = useState(false)
+  const [showSeedInvite, setShowSeedInvite] = useState(true)
+  const [inviteDraft, setInviteDraft] = useState('')
+  const legacySharedUsers = [
+    {
+      id: 'pending-primary',
+      email: 'hakan@sivritepe.com',
+      status: 'Pending',
+      resend: true,
+      submitted: false,
+    },
+    {
+      id: 'pending-test',
+      email: 'hakansivritepe+test@jotform.com',
+      status: 'Pending',
+      resend: true,
+      submitted: false,
+    },
+    {
+      id: 'submitted-admin',
+      name: 'Hakan Sivritepe Admin',
+      email: 'hakansivritepe@jotform.com',
+      status: 'Joined on May 21, 2026',
+      detail: 'Last submission on May 21, 2026',
+      submitted: true,
+    },
+  ]
+
+  return (
+    <div className="legacy-experience">
+      <header className="legacy-topbar">
+        <div className="legacy-brand">
+          <div className="legacy-logo">
+            <span className="jotform-logo__mark" />
+            Jotform
+          </div>
+          <button className="builder-switch" type="button">
+            Form Builder
+            <Icon name="chevron-down" category="arrows" size={14} />
+          </button>
+        </div>
+        <div className="form-heading">
+          <h1>Form 1</h1>
+          <p>Last edited at Tue, May 19, 2026</p>
+        </div>
+        <div className="topbar__actions">
+          <Button
+            iconOnly
+            variant="filled"
+            colorScheme="secondary"
+            shape="rounded"
+            size="sm"
+            aria-label="History"
+            title="History"
+            leftIcon={<Icon name="clock-arrow-rotate-right" category="time-date" size={16} />}
+          />
+          <Button
+            variant="filled"
+            colorScheme="secondary"
+            shape="rounded"
+            size="sm"
+            leftIcon={<Icon name="users-plus-filled" category="users" size={16} />}
+          >
+            Add Collaborator
+          </Button>
+          <div className="user-avatar">HS</div>
+        </div>
+      </header>
+
+      <nav className="product-tabs legacy-tabs" aria-label="Builder sections">
+        <span className="product-tabs__spacer" aria-hidden="true" />
+        <button type="button">Build</button>
+        <button type="button">Settings</button>
+        <button type="button" className="product-tabs__active">Publish</button>
+        <div className="preview-toggle">
+          <span>Preview Form</span>
+          <span className="preview-toggle__track"><span /></span>
+        </div>
+      </nav>
+
+      <div className="jf-app__body legacy-body">
+        <Sidebar
+          activeTitle={page === 'email' ? 'Email' : 'Assign Form'}
+          onOpenAssignForm={() => setPage('publish')}
+          onOpenEmail={() => setPage('email')}
+        />
+        {page === 'email' ? (
+          <LegacyEmailPage onOpenReminder={() => setPage('reminder')} />
+        ) : page === 'reminder' ? (
+          <LegacyReminderEmailPage onBack={() => setPage('email')} />
+        ) : (
+        <main className="publish-page legacy-publish">
+          <section className="direct-link-header">
+            <div className="header-icon">
+              <Icon name="link-diagonal" category="general" size={24} />
+            </div>
+            <div>
+              <h2>Direct Link of Your Form</h2>
+              <p>Your form is securely published and ready to use at this address</p>
+            </div>
+          </section>
+
+          <section className="publish-card">
+            <div className="section-row">
+              <div className="section-title">
+                <h3>Share with Link</h3>
+                <Badge
+                  size="sm"
+                  status="success"
+                  icon={<Icon name="lock-filled" category="security" size={12} />}
+                >
+                  Public Form
+                </Badge>
+              </div>
+              <Button
+                variant="transparent"
+                colorScheme="primary"
+                size="sm"
+                leftIcon={<Icon name="gear-filled" category="general" size={16} />}
+              >
+                Settings
+              </Button>
+            </div>
+
+            <div className="form-url">
+              <Icon name="link-diagonal" category="general" size={18} />
+              <span>https://demo.jotform.com/261055333446857</span>
+              <Button
+                iconOnly
+                variant="transparent"
+                colorScheme="secondary"
+                size="sm"
+                title="Edit link"
+                aria-label="Edit link"
+                leftIcon={<Icon name="pencil-to-square" category="general" size={16} />}
+              />
+            </div>
+
+            <div className="button-stack">
+              <Button variant="filled" colorScheme="constructive">Copy Link</Button>
+              <Button>Open in New Tab</Button>
+            </div>
+
+            <div className="card-separator" />
+
+            <div className="legacy-invite">
+              <div className="section-row">
+                <div className="section-title">
+                  <h3>Invite by Email</h3>
+                  <button
+                    className="legacy-upload"
+                    type="button"
+                    aria-label="Bulk invite options"
+                    onClick={() => setUploadMenuOpen((current) => !current)}
+                  >
+                    <Icon name="cloud-arrow-up" category="general" size={16} />
+                  </button>
+                  {uploadMenuOpen && (
+                    <div className="legacy-upload-menu">
+                      <button type="button">
+                        <Icon name="document-csv-filled" category="documents" size={16} />
+                        Upload CSV File
+                      </button>
+                      <button type="button">
+                        <Icon name="arrow-down-to-line" category="arrows" size={16} />
+                        Download Sample CSV
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <button className="shared-with legacy-shared-trigger" type="button" onClick={() => setSharedOpen(true)}>
+                  Shared with <span className="legacy-mini-avatar"><Icon name="user-filled" category="users" size={16} /></span>
+                </button>
+              </div>
+              <button className="invite-input legacy-invite-input" type="button" onClick={() => setInviteExpanded(true)}>
+                <Icon name="envelope-closed-filled" category="communication" size={18} />
+                <span>To:</span>
+                <span>Enter email addresses to send invitation with permissions.</span>
+              </button>
+
+              {inviteExpanded && (
+                <div className="legacy-invite-composer">
+                  <label htmlFor="legacy-invite-email">To</label>
+                  <div className="legacy-token-field">
+                    {showSeedInvite && (
+                      <span className="legacy-email-token">
+                        hakansivritepe+test@jotform.com
+                        <button type="button" aria-label="Remove email" onClick={() => setShowSeedInvite(false)}>
+                          <Icon name="xmark" category="general" size={10} />
+                        </button>
+                      </span>
+                    )}
+                    <input
+                      id="legacy-invite-email"
+                      value={inviteDraft}
+                      placeholder="Enter email addresses"
+                      onChange={(event) => setInviteDraft(event.target.value)}
+                    />
+                  </div>
+                  <div className="legacy-invite-actions">
+                    <button type="button" onClick={() => setInviteExpanded(false)}>
+                      Cancel
+                    </button>
+                    <Button size="sm" onClick={() => setSharedOpen(true)}>
+                      Send Invitation
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <SmallPublishCard
+            title="Share Form"
+            body="Share your form on Facebook, WhatsApp, X, LinkedIn or use QR code."
+            action="View More"
+            icon="share-nodes-filled"
+          />
+          <SmallPublishCard
+            title="Create AI Agents"
+            body="Turn your forms into AI-powered conversations. Let form fillers complete your form quickly and accurately with an AI Agents."
+            action="Create AI Agent"
+            icon="stars-filled"
+          />
+          <SmallPublishCard
+            title="Create App"
+            body="Create an app to store all of your forms in one place and easily share them with others. Start with this form!"
+            action="Create App"
+            icon="rocket-filled"
+          />
+        </main>
+        )}
+      </div>
+
+      <button className="legacy-prototype-button" type="button" onClick={onOpenPrototype}>
+        Open Prototype
+        <Icon name="arrow-right" category="arrows" size={14} />
+      </button>
+
+      <div className="legacy-copilot">Ask Copilot</div>
+
+      {sharedOpen && (
+        <div className="modal-layer" role="presentation" onMouseDown={() => setSharedOpen(false)}>
+          <section
+            className="shared-modal legacy-shared-modal"
+            role="dialog"
+            aria-modal="true"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <header className="shared-modal__header">
+              <h2>Shared with 3 users</h2>
+              <Button
+                iconOnly
+                variant="filled"
+                colorScheme="secondary"
+                shape="rounded"
+                aria-label="Close shared users"
+                title="Close"
+                leftIcon={<Icon name="xmark" category="general" size={16} />}
+                onClick={() => setSharedOpen(false)}
+              />
+            </header>
+
+            <div className="shared-modal__toolbar">
+              <label className="select-all">
+                <span className="check-box" />
+                Users
+              </label>
+              <Input
+                size="sm"
+                placeholder="Search"
+                leftContent={<Icon name="magnifying-glass" category="general" size={16} />}
+                aria-label="Search shared users"
+              />
+            </div>
+
+            <div className="legacy-shared-list">
+              {legacySharedUsers.map((user) => (
+                <div className="legacy-shared-row" key={user.id}>
+                  <span className="check-box" />
+                  <span className={user.submitted ? 'legacy-green-avatar' : 'legacy-orange-avatar'}>
+                    {user.submitted ? 'HS' : <Icon name="user-filled" category="users" size={18} />}
+                  </span>
+                  <span className="legacy-shared-person">
+                    {user.name && <strong>{user.name}</strong>}
+                    <span>{user.email}</span>
+                  </span>
+                  <span className={user.submitted ? 'legacy-submitted' : 'legacy-pending'}>
+                    {user.status}
+                    {user.detail && <small>{user.detail}</small>}
+                    {user.resend && <button type="button">Resend Invitation</button>}
+                  </span>
+                  <button className="role-button" type="button">
+                    Submit & View
+                    <Icon name="chevron-down" category="arrows" size={12} />
+                  </button>
+                  <div className="row-actions">
+                    <Button
+                      iconOnly
+                      variant="ghost"
+                      colorScheme="secondary"
+                      size="sm"
+                      aria-label="User actions"
+                      title="User actions"
+                      leftIcon={<Icon name="ellipsis-vertical" category="general" size={16} />}
+                      onClick={() => setActionsOpen((current) => (current === user.id ? null : user.id))}
+                    />
+                    {actionsOpen === user.id && (
+                      <div className="row-menu legacy-row-menu">
+                        <button type="button">
+                          <Icon name="envelope-closed-filled" category="communication" size={16} />
+                          Resend Invitation
+                        </button>
+                        <button type="button">
+                          <Icon name="trash-filled" category="general" size={16} />
+                          Revoke User
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LegacyEmailPage({ onOpenReminder }: { onOpenReminder: () => void }) {
+  return (
+    <main className="publish-page legacy-email-page">
+      <section className="direct-link-header">
+        <div className="legacy-email-header-icon">
+          <Icon name="envelope-closed-filled" category="communication" size={24} />
+        </div>
+        <div>
+          <h2>Email Form</h2>
+          <p>Share your forms through email</p>
+        </div>
+      </section>
+
+      <div className="legacy-email-list">
+        <button className="legacy-email-option" type="button">
+          <span className="legacy-email-option__icon">
+            <Icon name="envelope-closed-filled" category="communication" size={24} />
+          </span>
+          <span>
+            <strong>Share on Email</strong>
+            <small>Share a direct link to your form via email.</small>
+          </span>
+          <Icon name="arrow-right" category="arrows" size={20} />
+        </button>
+
+        <button className="legacy-email-option" type="button" onClick={onOpenReminder}>
+          <span className="legacy-email-option__icon">
+            <Icon name="envelope-closed-bell-diagonal-filled" category="communication" size={24} />
+          </span>
+          <span>
+            <strong>Schedule a Reminder Email</strong>
+            <small>Send periodic emails to remind people to fill out your form.</small>
+          </span>
+          <Icon name="arrow-right" category="arrows" size={20} />
+        </button>
+      </div>
+    </main>
+  )
+}
+
+function LegacyReminderEmailPage({ onBack }: { onBack: () => void }) {
+  const [activeTab, setActiveTab] = useState<'email' | 'recipients' | 'schedule'>('email')
+
+  return (
+    <main className="publish-page legacy-reminder-page">
+      <section className="legacy-reminder-heading">
+        <button className="legacy-back-button" type="button" aria-label="Back to email page" onClick={onBack}>
+          <Icon name="arrow-left" category="arrows" size={26} />
+        </button>
+        <span className="legacy-reminder-heading__icon">
+          <Icon name="envelope-closed-bell-diagonal-filled" category="communication" size={24} />
+        </span>
+        <div>
+          <h2>
+            Reminder Email 1
+            <Icon name="pencil" category="editor" size={14} />
+          </h2>
+          <p>Schedule your reminder email</p>
+        </div>
+      </section>
+
+      <section className="legacy-reminder-panel">
+        <div className="legacy-reminder-tabs" role="tablist" aria-label="Reminder email settings">
+          {[
+            { value: 'email', label: 'EMAIL' },
+            { value: 'recipients', label: 'RECIPIENTS' },
+            { value: 'schedule', label: 'SCHEDULE' },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              className={activeTab === tab.value ? 'legacy-reminder-tab legacy-reminder-tab--active' : 'legacy-reminder-tab'}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.value}
+              onClick={() => setActiveTab(tab.value as 'email' | 'recipients' | 'schedule')}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="legacy-reminder-body">
+          {activeTab === 'email' && (
+            <div className="legacy-reminder-email-tab">
+              <label>
+                Subject <span>*</span>
+              </label>
+              <div className="legacy-plain-input">Daily Reminder: Form 1</div>
+              <div className="legacy-editor">
+                <div className="legacy-editor-toolbar">
+                  <span>16 px</span>
+                  <strong>B</strong>
+                  <em>I</em>
+                  <Icon name="text-underline" category="editor" size={16} />
+                  <Icon name="image" category="media" size={16} />
+                </div>
+                <div className="legacy-editor-canvas">
+                  <h3>A form is waiting for you to fill out.</h3>
+                  <p>Hi there,</p>
+                  <p>Just a friendly reminder for you. Please click the button below to fill out the ‘Form 1’.</p>
+                  <button type="button">View Form</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'recipients' && (
+            <div className="legacy-form-stack">
+              <label>Sender Name</label>
+              <div className="legacy-plain-input">Hakan Sivritepe Admin</div>
+              <label>
+                Reply-to Email <span>*</span>
+              </label>
+              <div className="legacy-plain-input">hakansivritepe@jotform.com</div>
+              <label>
+                To <span>*</span>
+              </label>
+              <div className="legacy-recipient-box">hakansivritepe@jotform.com</div>
+            </div>
+          )}
+
+          {activeTab === 'schedule' && (
+            <div className="legacy-form-stack">
+              <label>Repeats</label>
+              <div className="legacy-segments">
+                <button className="legacy-segment legacy-segment--active" type="button">Daily</button>
+                <button className="legacy-segment" type="button">Weekly</button>
+                <button className="legacy-segment" type="button">Monthly</button>
+              </div>
+              <label>Send Date</label>
+              <div className="legacy-plain-input">Monday - Friday</div>
+              <div className="legacy-two-col">
+                <div>
+                  <label>Send Time</label>
+                  <div className="legacy-plain-input">9:00 AM</div>
+                </div>
+                <div>
+                  <label>Time Zone</label>
+                  <div className="legacy-plain-input">Los Angeles (GMT-08:00)</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <div className="legacy-reminder-actions">
+        <button type="button">Cancel</button>
+        <button type="button">Save</button>
+      </div>
+    </main>
+  )
+}
+
 const presentationSlides = [
   {
-    eyebrow: 'Title',
-    title: 'Submission-aware reminders for Invite by Email',
-    body: 'Hackweek prototype for turning form invitations into a follow-up workflow that knows each recipient status.',
+    eyebrow: 'Issue',
+    title: 'Invites stop at pending',
+    body: 'Pending state is for email link clicked, not for submission.',
     bullets: [
-      'Invite people with personal form links.',
-      'Schedule reminders for all, selected, or individual invitees.',
-      'Stop reminders automatically after submission.',
+      'No clear screen for who still needs to submit.',
+      'No reminder schedule tied to submission status.',
     ],
   },
   {
-    eyebrow: 'Issue from tickets',
-    title: 'Inviting people is easy. Following up is manual.',
-    body: 'Users can invite people to fill a form, but they do not have a good follow-up screen or submission-aware reminder setup.',
+    eyebrow: 'Signal',
+    title: 'Repeated customer request',
+    body: 'Many client tickets ask for a way to remind invited recipients until they complete the form.',
     bullets: [
-      'Admins need to know who has not submitted yet.',
-      'Reminder emails should not keep going after a recipient completes the form.',
-      'Large invite lists need tracking, filtering, and bulk actions.',
+      'Especially painful for large invite lists.',
+      'Clients wants automatic reminders to stop in different conditions.',
     ],
+  },
+  {
+    eyebrow: 'Fix',
+    title: 'Submission-aware reminders',
+    body: 'The prototype adds reminders, tracking, bulk invite, and per-user settings inside the existing Publish flow.',
+    bullets: [],
   },
 ]
 
@@ -1012,10 +1536,14 @@ function PresentationNotes({
   activeStep,
   setActiveStep,
   onClose,
+  onOpenEmailPage,
+  onStartPrototype,
 }: {
   activeStep: number
   setActiveStep: (step: number) => void
   onClose: () => void
+  onOpenEmailPage?: () => void
+  onStartPrototype?: () => void
 }) {
   const slide = presentationSlides[activeStep]
   const isLast = activeStep === presentationSlides.length - 1
@@ -1044,11 +1572,19 @@ function PresentationNotes({
         <span className="presentation-notes__eyebrow">{slide.eyebrow}</span>
         <h2>{slide.title}</h2>
         <p>{slide.body}</p>
-        <ul>
-          {slide.bullets.map((bullet) => (
-            <li key={bullet}>{bullet}</li>
-          ))}
-        </ul>
+        {slide.bullets.length > 0 && (
+          <ul>
+            {slide.bullets.map((bullet) => (
+              <li key={bullet}>{bullet}</li>
+            ))}
+          </ul>
+        )}
+        {activeStep === 1 && (
+          <button className="presentation-notes__link" type="button" onClick={onOpenEmailPage}>
+            <Icon name="arrow-right" category="arrows" size={14} />
+            Email page
+          </button>
+        )}
       </div>
 
       <footer className="presentation-notes__footer">
@@ -1082,6 +1618,7 @@ function PresentationNotes({
             rightIcon={<Icon name={isLast ? 'xmark' : 'arrow-right'} category={isLast ? 'general' : 'arrows'} size={14} />}
             onClick={() => {
               if (isLast) {
+                onStartPrototype?.()
                 onClose()
                 return
               }
@@ -1089,7 +1626,7 @@ function PresentationNotes({
               setActiveStep(activeStep + 1)
             }}
           >
-            {isLast ? 'Start Demo' : 'Next'}
+            {isLast ? 'Demo page' : 'Next'}
           </Button>
         </div>
       </footer>
@@ -1112,15 +1649,29 @@ function ProductTabs({ onOpenPublish }: { onOpenPublish: () => void }) {
   )
 }
 
-function Sidebar({ onOpenAssignForm }: { onOpenAssignForm: () => void }) {
+function Sidebar({
+  activeTitle = 'Assign Form',
+  onOpenAssignForm,
+  onOpenEmail,
+}: {
+  activeTitle?: string
+  onOpenAssignForm: () => void
+  onOpenEmail?: () => void
+}) {
   return (
     <aside className="sidebar" aria-label="Publish navigation">
       {navItems.map((item) => (
         <button
-          className={`side-nav-item${item.active ? ' side-nav-item--active' : ''}`}
+          className={`side-nav-item${item.title === activeTitle ? ' side-nav-item--active' : ''}`}
           key={item.title}
           type="button"
-          onClick={item.title === 'Assign Form' ? onOpenAssignForm : undefined}
+          onClick={
+            item.title === 'Assign Form'
+              ? onOpenAssignForm
+              : item.title === 'Email'
+                ? onOpenEmail
+                : undefined
+          }
         >
           {item.glyph ? (
             <span className="side-nav-glyph" aria-hidden="true">{item.glyph}</span>
