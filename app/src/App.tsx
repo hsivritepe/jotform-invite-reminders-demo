@@ -150,7 +150,6 @@ const emailTabs = [
 ]
 
 const productionDemoUrl = 'https://hsivritepe.github.io/jotform-invite-reminders-demo/?present=1'
-const productionDemoQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&margin=1&data=${encodeURIComponent(productionDemoUrl)}`
 
 const navItems: Array<{
   title: string
@@ -975,13 +974,10 @@ function App() {
 function ProductionDemoBadge() {
   return (
     <aside className="production-demo-badge" aria-label="Production demo link">
-      <img src={productionDemoQrUrl} alt="QR code for production demo" />
-      <div>
-        <strong>REMINDER EMAIL FOR INVITED FORM FILLERS</strong>
-        <a href={productionDemoUrl} target="_blank" rel="noreferrer">
-          hsivritepe.github.io/jotform-invite-reminders-demo/?present=1
-        </a>
-      </div>
+      <strong>REMINDER EMAIL FOR INVITED FORM FILLERS</strong>
+      <a href={productionDemoUrl} target="_blank" rel="noreferrer">
+        hsivritepe.github.io/jotform-invite-reminders-demo/?present=1
+      </a>
     </aside>
   )
 }
